@@ -15,22 +15,56 @@ from typing import Optional, Dict, List
 from collections import defaultdict
 import os
 
-# Windows-specific imports (with fallback for demo mode)
-DEMO_MODE = os.getenv("DEMO_MODE", "false").lower() == "true"
-
-if not DEMO_MODE:
-    try:
-        import win32gui
-        import win32process
-        import psutil
-        WINDOWS_AVAILABLE = True
-    except ImportError:
-        logging.warning("Windows APIs not available. Running in demo mode.")
-        WINDOWS_AVAILABLE = False
-else:
+# Windows-specific imports - always try to import
+try:
+    import win32gui
+    import win32process
+    import psutil
+    WINDOWS_AVAILABLE = True
+except ImportError:
+    logging.warning("Windows APIs not available (win32gui, win32process, psutil). Install with: pip install pywin32 psutil")
     WINDOWS_AVAILABLE = False
 
+
+def is_demo_mode() -> bool:
+    """Check if demo mode is enabled (checked dynamically each call)."""
+    return os.getenv("DEMO_MODE", "false").lower() == "true"
+
+
 logger = logging.getLogger(__name__)
+
+# Mapping of process names to friendly app names
+APP_NAME_MAP = {
+    "Taskmgr": "Task Manager",
+    "explorer": "File Explorer",
+    "ApplicationFrameHost": "Windows App",
+    "SystemSettings": "Windows Settings",
+    "ShellExperienceHost": "Windows Shell",
+    "SearchHost": "Windows Search",
+    "StartMenuExperienceHost": "Start Menu",
+    "TextInputHost": "Windows Input",
+    "WindowsTerminal": "Windows Terminal",
+    "cmd": "Command Prompt",
+    "powershell": "PowerShell",
+    "pwsh": "PowerShell",
+    "Code": "Visual Studio Code",
+    "devenv": "Visual Studio",
+    "chrome": "Google Chrome",
+    "msedge": "Microsoft Edge",
+    "firefox": "Firefox",
+    "OUTLOOK": "Outlook",
+    "WINWORD": "Microsoft Word",
+    "EXCEL": "Microsoft Excel",
+    "POWERPNT": "PowerPoint",
+    "notepad": "Notepad",
+    "mspaint": "Paint",
+    "SnippingTool": "Snipping Tool",
+    "Spotify": "Spotify",
+    "Discord": "Discord",
+    "Slack": "Slack",
+    "Teams": "Microsoft Teams",
+    "ms-teams": "Microsoft Teams",
+}
 
 
 @dataclass
@@ -106,7 +140,8 @@ class ActivityTracker:
         Get the current foreground window info.
         Returns None if unable to detect (e.g., locked screen).
         """
-        if not WINDOWS_AVAILABLE:
+        # Check dynamically if we should use demo mode
+        if is_demo_mode() or not WINDOWS_AVAILABLE:
             return self._get_demo_window()
         
         try:
@@ -124,7 +159,31 @@ class ActivityTracker:
             _, pid = win32process.GetWindowThreadProcessId(hwnd)
             try:
                 process = psutil.Process(pid)
-                app_name = process.name().replace('.exe', '')
+                raw_name = process.name().replace('.exe', '')
+                
+                # Map to friendly name if available
+                app_name = APP_NAME_MAP.get(raw_name, raw_name)
+                
+                # For UWP apps (ApplicationFrameHost), try to get real app from window title
+                if raw_name == "ApplicationFrameHost" and window_title:
+                    # Common UWP apps detection from title
+                    title_lower = window_title.lower()
+                    if "calculator" in title_lower:
+                        app_name = "Calculator"
+                    elif "settings" in title_lower:
+                        app_name = "Windows Settings"
+                    elif "store" in title_lower:
+                        app_name = "Microsoft Store"
+                    elif "photos" in title_lower:
+                        app_name = "Photos"
+                    elif "mail" in title_lower:
+                        app_name = "Mail"
+                    elif "calendar" in title_lower:
+                        app_name = "Calendar"
+                    else:
+                        # Use first word of title as app name
+                        app_name = window_title.split(' - ')[0].split(' ')[0] or "Windows App"
+                        
             except (psutil.NoSuchProcess, psutil.AccessDenied):
                 app_name = "Unknown"
             

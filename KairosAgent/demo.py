@@ -25,9 +25,11 @@ import signal
 import webbrowser
 import socket
 
-# Ensure we're in demo mode
-os.environ["DEMO_MODE"] = "true"
-os.environ["CLOUD_MODE"] = "false"  # Deterministic responses for demo
+# Configuration for demo
+# DEMO_MODE=false means we track REAL Windows apps (not simulated)
+# CLOUD_MODE=false means we use deterministic responses (no Vertex AI needed)
+os.environ["DEMO_MODE"] = "false"  # Track REAL apps on Windows
+os.environ["CLOUD_MODE"] = "false"  # Deterministic cloud responses for demo
 os.environ["USER_GOALS"] = "coding,learning"
 
 
@@ -218,9 +220,9 @@ def run_local_agent(duration: int):
     # Import and run directly
     sys.path.insert(0, local_dir)
     
-    # Set environment
+    # Set environment - DEMO_MODE is already set at top of file
+    # DEMO_MODE=false means we track REAL Windows apps
     os.environ["CLOUD_SERVICE_URL"] = "http://localhost:8080"
-    os.environ["DEMO_MODE"] = "true"
     
     # Import after setting path
     from main import KairosAgent, ActivityTracker
