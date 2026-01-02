@@ -1,0 +1,350 @@
+/**
+ * Kairos Agent UI - Minimal, Ethical Styles
+ * 
+ * Design Philosophy:
+ * - Calm, not alarming
+ * - Informative, not judgmental
+ * - Clarity over aesthetics
+ * - Trust through transparency
+ */
+
+:root {
+  /* Calm, neutral color palette */
+  --bg-primary: #f8f9fa;
+  --bg-card: #ffffff;
+  --text-primary: #2c3e50;
+  --text-secondary: #6c757d;
+  --text-muted: #adb5bd;
+  
+  /* Intent colors - subtle, not alarming */
+  --intent-productive: #28a745;
+  --intent-neutral: #6c757d;
+  --intent-unproductive: #dc3545;
+  --intent-unknown: #adb5bd;
+  
+  /* Status colors */
+  --status-active: #28a745;
+  --status-analyzing: #007bff;
+  --status-idle: #6c757d;
+  
+  --border-color: #e9ecef;
+  --shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 
+               'Helvetica Neue', Arial, sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+}
+
+/* Main container */
+.app {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 24px;
+  min-height: 100vh;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.header h1 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.header .subtitle {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.header .privacy-note {
+  margin-top: 12px;
+  padding: 8px 16px;
+  background: #e8f4fd;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  color: #0c5460;
+}
+
+/* Cards */
+.card {
+  background: var(--bg-card);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
+}
+
+.card-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+}
+
+/* Agent Status Card */
+.status-card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.status-item {
+  padding: 12px;
+  background: var(--bg-primary);
+  border-radius: 8px;
+}
+
+.status-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.status-value {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.status-value.intent-productive { color: var(--intent-productive); }
+.status-value.intent-neutral { color: var(--intent-neutral); }
+.status-value.intent-unproductive { color: var(--intent-unproductive); }
+.status-value.intent-unknown { color: var(--intent-unknown); }
+
+/* Confidence bar */
+.confidence-bar {
+  height: 6px;
+  background: var(--border-color);
+  border-radius: 3px;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.confidence-fill {
+  height: 100%;
+  background: var(--intent-productive);
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* Focus context */
+.focus-context {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 16px;
+  background: var(--bg-primary);
+  border-radius: 8px;
+}
+
+.focus-context .label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.focus-context .value {
+  font-size: 1rem;
+  color: var(--text-primary);
+}
+
+/* Last Decision Card */
+.decision-card .reasoning {
+  font-size: 1rem;
+  color: var(--text-primary);
+  padding: 16px;
+  background: var(--bg-primary);
+  border-radius: 8px;
+  border-left: 4px solid var(--intent-neutral);
+  margin-bottom: 12px;
+}
+
+.decision-card .reasoning.action-nudge {
+  border-left-color: var(--intent-productive);
+  background: #f0fff4;
+}
+
+.decision-card .meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.decision-card .action-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.action-badge.none {
+  background: #e9ecef;
+  color: var(--text-secondary);
+}
+
+.action-badge.nudge {
+  background: #d4edda;
+  color: #155724;
+}
+
+/* Timeline */
+.timeline {
+  list-style: none;
+}
+
+.timeline-item {
+  padding: 16px;
+  border-left: 2px solid var(--border-color);
+  margin-left: 8px;
+  padding-left: 20px;
+  position: relative;
+  margin-bottom: 8px;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -5px;
+  top: 20px;
+  width: 8px;
+  height: 8px;
+  background: var(--border-color);
+  border-radius: 50%;
+}
+
+.timeline-item.action-nudge::before {
+  background: var(--intent-productive);
+}
+
+.timeline-item .time {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.timeline-item .reasoning {
+  font-size: 0.95rem;
+  color: var(--text-primary);
+}
+
+.timeline-item .intent-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  margin-top: 8px;
+}
+
+.intent-tag.productive { background: #d4edda; color: #155724; }
+.intent-tag.neutral { background: #e9ecef; color: var(--text-secondary); }
+.intent-tag.unproductive { background: #f8d7da; color: #721c24; }
+.intent-tag.unknown { background: #e9ecef; color: var(--text-muted); }
+
+/* Connection status */
+.connection-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+}
+
+.connection-status.connected {
+  background: #d4edda;
+  color: #155724;
+}
+
+.connection-status.disconnected {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-secondary);
+}
+
+.empty-state .icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 24px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  border-top: 1px solid var(--border-color);
+  margin-top: 32px;
+}
+
+/* Loading spinner */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 20px;
+  color: var(--text-secondary);
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-color);
+  border-top-color: var(--text-secondary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .app {
+    padding: 16px;
+  }
+  
+  .status-card {
+    grid-template-columns: 1fr;
+  }
+  
+  .decision-card .meta {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
